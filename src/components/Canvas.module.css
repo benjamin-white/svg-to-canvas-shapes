@@ -1,0 +1,8 @@
+.wrap {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.wrap canvas {
+  border: 1px solid;
+}

@@ -1,0 +1,25 @@
+@import '~sanitize.css';
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+
+:root {
+  --font-body: 'Source Sans Pro', sans-serif
+}
+
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  padding: .2em 1.2em;
+  transition: background-color .5s ease-out, color .5s ease-out;
+}
+
+button:hover {
+  background: #000;
+  color: #fff;
+}

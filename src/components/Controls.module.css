@@ -1,0 +1,13 @@
+.wrap {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+}
+
+.wrap button {
+  margin-right: 1em;
+}
+
+.wrap button:last-child {
+  margin-right: 0;
+}
