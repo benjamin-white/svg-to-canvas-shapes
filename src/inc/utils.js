@@ -16,8 +16,14 @@ const vecAdjustMagnitude = (vec2d, scaleBy) => {
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
 
+const fit = (current, in_min, in_max, out_min, out_max) => {
+  const mapped = ((current - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+  return clamp(mapped, out_min, out_max);
+}
+
 export {
   movePoint,
   vecAdjustMagnitude,
-  clamp
+  clamp,
+  fit
 }

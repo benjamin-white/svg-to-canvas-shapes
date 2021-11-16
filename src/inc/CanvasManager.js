@@ -14,14 +14,16 @@ class CanvasManager {
     this.historyIndex = 0
     this.historyMax   = 100
     this.objDefaults  = {
-      fill: '#fff',
-      strokeWidth: 1,
-      stroke: '#000',
       centeredRotation: true,
       centeredScaling: true,
-      transparentCorners: false,
       cornerSize: 12,
-      padding: 10
+      fill: '#fff',
+      padding: 10,
+      strokeWidth: 1,
+      stroke: '#000',
+      strokeUniform: true,
+      transparentCorners: false,
+      noScaleCache: false
     }
 
     this._createCanvas()

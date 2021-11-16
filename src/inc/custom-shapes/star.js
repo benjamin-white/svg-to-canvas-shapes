@@ -3,7 +3,8 @@ import { debounce } from 'lodash'
 import { 
   movePoint, 
   vecAdjustMagnitude,
-  clamp
+  clamp,
+  fit
 } from '../utils'
 
 
@@ -20,7 +21,6 @@ class star {
     this._fullRotation      = 2 * Math.PI
     this._recordChange      = typeof recordChange === 'function' ? recordChange : () => {}
     this._heldRecord        = debounce(this._record, 500)
-    this._heldHandleSpokes  = debounce(this._handleSpokes, 10)
     this._fabricInstance    = ctx
     this._translationOffset = {x: 0, y: 0}
     this._scaleOffset       = {x: 1, y: 1}
@@ -59,6 +59,10 @@ class star {
       tr: fabric.Object.prototype.controls.tr,
       bl: fabric.Object.prototype.controls.bl,
       br: fabric.Object.prototype.controls.br,
+      ml: fabric.Object.prototype.controls.ml,
+      mt: fabric.Object.prototype.controls.mt,
+      mr: fabric.Object.prototype.controls.mr,
+      mb: fabric.Object.prototype.controls.mb,
       radius: this._controlRadius(),
       depth: this._controlDepth(),
       spokes: this._controlSpokes()
@@ -159,7 +163,7 @@ class star {
       const pointLoc = vecAdjustMagnitude(
         {
           x: this._controlsCustom.radius.x - this.origin.x,
-          y: this._controlsCustom.radius.y + this.roundness * 100 - this.origin.y
+          y: this._controlsCustom.radius.y + fit(this.roundness, 0, .499, 0, this.outerRadius) - this.origin.y
         }, 
         this._scaleOffset
       )
@@ -197,7 +201,7 @@ class star {
         const pointLoc = vecAdjustMagnitude(
           {
             x: this._controlsCustom.radius.x - this.origin.x,
-            y: this._controlsCustom.radius.y + this.roundness * 100 - this.origin.y
+            y: this._controlsCustom.radius.y + fit(this.roundness, 0, .499, 0, this.outerRadius) - this.origin.y
           }, 
           this._scaleOffset
         )
@@ -207,13 +211,13 @@ class star {
         }
       },
       actionHandler: (eventData) => {
-        if (eventData.movementX) return
-        this.roundness = clamp(eventData.movementY > 0 ? this.roundness + .02 : this.roundness - .02, 0, 0.49)
+        if (eventData.movementY > 0) this.roundness = clamp(this.roundness + .02, 0, 0.499)
+        if (eventData.movementY < 0) this.roundness = clamp(this.roundness - .02, 0, 0.499)
         this._refresh()
         this._heldRecord()
       },
       render: drawRadiusControl,
-      cursorStyle: 'n-resize'
+      cursorStyle: 'crosshair'
     })
 
   }
@@ -260,7 +264,8 @@ class star {
         }
       },
       actionHandler: (eventData) => {
-        this.innerRadius = clamp(eventData.movementY > 0 || eventData.movementX < 0 ? this.innerRadius - 1 : this.innerRadius + 1, 3, this.outerRadius)
+        if (eventData.movementY > 0) this.innerRadius = clamp(this.innerRadius - 4, 3, this.outerRadius)
+        if (eventData.movementY < 0) this.innerRadius = clamp(this.innerRadius + 4, 3, this.outerRadius)
         this._refresh()
         this._heldRecord()
       },
@@ -312,21 +317,14 @@ class star {
         }
       },
       actionHandler: (eventData) => {
-        if (eventData.movementX) return
-        this._heldHandleSpokes(eventData)
+        if (eventData.movementY > 1 || (this.spokeCount > 8 && eventData.movementY > 0)) this.spokeCount = clamp(this.spokeCount - 1, 3, 200)
+        if (eventData.movementY < -1 || (this.spokeCount > 8 && eventData.movementY < 0)) this.spokeCount = clamp(this.spokeCount + 1, 3, 200)
+        this._refresh()
+        this._heldRecord()
       },
       render: drawSpokeControl,
-      cursorStyle: 'n-resize'
+      cursorStyle: 'crosshair'
     })
-
-  }
-
-
-  _handleSpokes(eventData) {
-
-    this.spokeCount = clamp(eventData.movementY > 0 ? this.spokeCount - 1 : this.spokeCount + 1, 3, 200)
-    this._refresh()
-    this._heldRecord()
 
   }
 
